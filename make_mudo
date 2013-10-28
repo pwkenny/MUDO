@@ -1,0 +1,43 @@
+# MUDO Makefile
+# You'll need edit a couple of things to build MUDO
+# This tells make where to find the OpenEye toolkits (e.g. OEChem)
+OEDIR = /home/peter/openeye/openeye/toolkits/
+
+INCDIR = $(OEDIR)/include
+LIBDIR = $(OEDIR)/lib
+
+INCS = -I$(INCDIR)
+LIBS = -L$(LIBDIR) \
+	-loebio \
+	-loechem \
+	-loesystem \
+	-loeplatform \
+	-lz \
+	 -lm -lpthread 
+
+
+# You will almost certainly need to change this as well
+CXX = /usr/lib64/ccache/g++
+RM=rm -f
+CXXFLAGS =  -W -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -pthread  -O3 -fomit-frame-pointer -ffast-math 
+LFLAGS =  -s
+
+
+PROGRAMS = \
+	mudo 
+
+.SUFFIXES:	.cpp
+.SUFFIXES:	.o
+.cpp.o:
+		$(CXX) $(CXXFLAGS) $(INCS) -c $<
+
+
+all:		$(PROGRAMS)
+
+clean:	
+		$(RM) $(PROGRAMS)
+		$(RM) ii_files core a.out
+		$(RM) *.o
+mudo.1.0.o: mudo.1.0.cpp
+mudo:	mudo.1.0.o
+		$(CXX) mudo.1.0.o $(LFLAGS) -o $@ $(LIBS)
